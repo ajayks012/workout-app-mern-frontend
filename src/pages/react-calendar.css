@@ -1,0 +1,63 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.dark-calendar {
+  @apply bg-gray-800 text-white;
+}
+
+.dark-calendar .react-calendar__navigation {
+  @apply bg-gray-700;
+}
+
+.dark-calendar .react-calendar__navigation button {
+  @apply bg-gray-700 text-white;
+}
+
+.dark-calendar .react-calendar__navigation button:hover {
+  @apply bg-gray-600;
+}
+
+.dark-calendar .react-calendar__navigation button--active {
+  @apply bg-gray-600;
+}
+
+.dark-calendar .react-calendar__month-view__weekdays {
+  @apply bg-gray-700;
+}
+
+.dark-calendar .react-calendar__month-view__weekdays__header {
+  @apply text-gray-400;
+}
+
+.dark-calendar .react-calendar__month-view__weekdays__weekday {
+  @apply text-gray-400;
+}
+
+.dark-calendar .react-calendar__year-view {
+  @apply bg-gray-700;
+}
+
+.dark-calendar .react-calendar__year-view__year {
+  @apply text-gray-400;
+}
+
+.dark-calendar .react-calendar__year-view__year--selected {
+  @apply bg-gray-600;
+}
+
+.dark-calendar .react-calendar__year-view__year--highlighted {
+  @apply bg-gray-600;
+}
+
+.dark-calendar .react-calendar__year-view__arrow {
+  @apply text-gray-400;
+}
+
+.dark-calendar .react-calendar__decade-view {
+  @apply bg-gray-700;
+}
+
+.dark-calendar .react-calendar__decade-view__title {
+  @apply text-gray-400;
+}
