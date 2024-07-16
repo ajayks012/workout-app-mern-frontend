@@ -1,26 +1,22 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 // import TestPage from "./TestPage";
 import { dateFormatter } from "@/lib/utils";
 import axios from "axios";
-import { MdEdit } from "react-icons/md";
 import "./react-calendar.css";
-
-type workout = {
-  date: Date;
-  load: number;
-  reps: number;
-  title: string;
-  __v: number;
-  _id: string;
-};
+import { workout } from "@/types/types";
+import WorkoutTable from "@/components/WorkoutTable";
+import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
 
 const Home = () => {
   const [workouts, setWorkouts] = useState<workout[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [loadingFlag, setLoadingFlag] = useState<boolean>(false);
 
-  const fetchWorkouts = async (date?: Date) => {
+  const fetchWorkouts = useCallback(async (selectedDate?: Date | null) => {
+    const date = selectedDate ? selectedDate : new Date();
+    setLoadingFlag(true);
     if (date) {
       try {
         const formattedDate = dateFormatter(date);
@@ -32,9 +28,12 @@ const Home = () => {
         const res = await axios.request(reqOptions);
         console.log(res.data);
         setWorkouts(res.data);
+
+        setLoadingFlag(false);
       } catch (err) {
         console.log(err);
         setWorkouts([]);
+        setLoadingFlag(false);
       }
     } else {
       try {
@@ -43,77 +42,70 @@ const Home = () => {
           url: "http://localhost:4000/workouts",
         });
         console.log(res.data);
+        setLoadingFlag(false);
       } catch (err) {
         console.log(err);
         setWorkouts([]);
+        setLoadingFlag(false);
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const date = selectedDate ? selectedDate : new Date();
-    fetchWorkouts(date);
+    fetchWorkouts(selectedDate);
   }, [selectedDate]);
 
-  const table = (
-    <div className="overflow-x-auto">
-      <table className="table border-2 border-primary ">
-        {/* head */}
-        <thead>
-          <tr className="bg-primary text-black">
-            <th className="w-1/12 text-center"></th>
-            <th className="w-6/12 text-sm">Title</th>
-            <th className="w-2/12 text-sm">Load(in KG)</th>
-            <th className="w-2/12 text-sm">Reps</th>
-            <th className="w-1/12"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {workouts.length > 0 ? (
-            workouts.map((item: workout, index: number) => {
-              return (
-                <tr key={item._id} className="p-10 hover:bg-primary-content">
-                  <td className="w-1/12 text-center">{index + 1}</td>
-                  <td>{item.title}</td>
-                  <td>{item.load}</td>
-                  <td>{item.reps}</td>
-                  <td>
-                    <div className="link">
-                      <MdEdit className="text-lg" />
-                    </div>
-                  </td>
-                </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td colSpan={5} className="text-center">
-                No data to display
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+  const handleDelete = useCallback(async (id: String) => {
+    setLoadingFlag(true);
+
+    try {
+      const apiUrl = "http://localhost:4000/workouts/" + id;
+      const res = await axios({
+        method: "DELETE",
+        url: apiUrl,
+      });
+      console.log(res.data);
+      fetchWorkouts(selectedDate);
+      setLoadingFlag(false);
+    } catch (err) {
+      console.log(err);
+      setLoadingFlag(false);
+    }
+  }, []);
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate((prevState: Date) => {
+      if (prevState.toDateString() !== date.toDateString()) {
+        return date;
+      } else {
+        return prevState;
+      }
+    });
+    return date;
+  };
 
   return (
-    <div className="flex flex-wrap p-5 justify-around">
-      <div className="container text-primary p-3 ml-3 font-bold text-lg">
-        <h1>
-          My Workouts -{" "}
-          {selectedDate
-            ? dateFormatter(selectedDate)
-            : dateFormatter(new Date())}
-        </h1>
-      </div>
-      <div className="grow p-2">{table}</div>
-      <div className="flex-none p-2">
-        <Calendar
-          className="text-primary bg-primary-content border-primary rounded-lg shadow-md"
-          value={selectedDate}
-          onChange={(e: any) => setSelectedDate(e)}
-        />
+    <div className="container mx-auto">
+      <LoadingComponent loading={loadingFlag} />
+      <div className="flex flex-wrap p-5 justify-around">
+        <div className="container text-primary p-3 ml-3 font-bold text-lg">
+          <h1>
+            My Workouts -{" "}
+            {selectedDate
+              ? dateFormatter(selectedDate)
+              : dateFormatter(new Date())}
+          </h1>
+        </div>
+        <div className="grow p-2">
+          <WorkoutTable content={workouts} deleteFunction={handleDelete} />
+        </div>
+        <div className="flex-none p-2">
+          <Calendar
+            className="text-primary bg-primary-content border-primary rounded-lg shadow-md"
+            value={selectedDate}
+            onChange={handleDateChange} // eslint-disable-line
+          />
+        </div>
       </div>
     </div>
   );
