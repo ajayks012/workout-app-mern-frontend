@@ -21,7 +21,7 @@ export const AppRouter: React.FC = () => {
                 <Route path="/" element={<Home />} />
                 {/* <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} /> */}
-                <Route path="/workout" element={<AddWorkouts />} />
+                <Route path="/add-workout" element={<AddWorkouts />} />
                 <Route path="*" element={<h1>NOT FOUND - 404</h1>} />
               </>
             ) : (
@@ -29,6 +29,7 @@ export const AppRouter: React.FC = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="*" element={<Login />} />
+                {/* <Route path="/add-workout" element={<AddWorkouts />} /> */}
               </>
             )}
           </Route>
