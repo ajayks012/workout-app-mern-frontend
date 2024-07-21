@@ -13,14 +13,13 @@ export const useLogin = () => {
     try {
       const response = await axios({
         method: "POST",
-        url: "http://localhost:4000/login",
+        url: "http://localhost:4000/auth/login",
         data: payload,
         headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       });
       if (response && response.data) {
-        localStorage.setItem("email", JSON.stringify(response.data.email));
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-
+        localStorage.setItem("user", JSON.stringify(response.data));
         //update auth context
         dispatch({ type: "LOGIN", payload: response.data });
         setLoading(false);

@@ -51,9 +51,9 @@ const Home = () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchWorkouts(selectedDate);
-  }, [selectedDate]);
+  // useEffect(() => {
+  //   fetchWorkouts(selectedDate);
+  // }, [selectedDate]);
 
   const handleDelete = useCallback(async (id: String) => {
     setLoadingFlag(true);

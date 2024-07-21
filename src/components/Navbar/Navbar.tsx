@@ -2,19 +2,20 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { CiDumbbell } from "react-icons/ci";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useLogout } from "@/hooks/useLogout";
+import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
 export const Navbar = () => {
   const { user } = useAuthContext();
-  const { logout } = useLogout();
+  const { logout, loading, error } = useLogout();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
   };
 
   return (
     <>
+      <LoadingComponent loading={loading} />
       <div className="navbar bg-primary text-primary-content">
         <div className="navbar-start pl-5">
           <div className="dropdown">

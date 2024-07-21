@@ -1,13 +1,33 @@
+import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const useLogout = () => {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { dispatch } = useAuthContext();
+  const navigate = useNavigate();
 
   const logout = async () => {
-    localStorage.removeItem("email");
-    localStorage.removeItem("token");
-
-    dispatch({ type: "LOGOUT" });
+    setLoading(true);
+    try {
+      const response = await axios({
+        method: "POST",
+        url: "http://localhost:4000/auth/logout",
+        withCredentials: true,
+      });
+      if (response && response.data) {
+        localStorage.removeItem("user");
+        dispatch({ type: "LOGOUT" });
+        setLoading(false);
+        navigate("/login");
+      }
+    } catch (err: any) {
+      setLoading(false);
+      console.log(err);
+      setError(err.response.data.error);
+    }
   };
-  return { logout };
+  return { logout, loading, error };
 };

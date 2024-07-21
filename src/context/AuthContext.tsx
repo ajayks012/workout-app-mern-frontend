@@ -1,3 +1,4 @@
+import axios from "axios";
 import { createContext, useEffect, useReducer } from "react";
 
 export const AuthContext = createContext();
@@ -17,13 +18,30 @@ export const AuthoContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
   });
-  useEffect(() => {
-    const email = JSON.parse(localStorage.getItem("email")) || "";
-    const token = JSON.parse(localStorage.getItem("token")) || "";
-    if (email && token) {
-      console.log(email, token);
-      dispatch({ type: "LOGIN", payload: { email, token } });
+
+  const handleRefresh = async () => {
+    if (state && state.user === null) {
+      try {
+        const response = await axios({
+          method: "GET",
+          url: "http://localhost:4000/auth/refresh",
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        });
+        const { _id, name, email, token } = response.data;
+        localStorage.setItem("user", JSON.stringify(response.data));
+        dispatch({ type: "LOGIN", payload: { _id, name, email, token } });
+      } catch (err) {
+        console.log(err);
+      }
     }
+    // const user = JSON.parse(localStorage.getItem("user")) || "";
+    // if (user.email && user.token) {
+    //   dispatch({ type: "LOGIN", payload: { ...user } });
+    // }
+  };
+  useEffect(() => {
+    handleRefresh();
   }, []);
 
   console.log("auth state", state);
