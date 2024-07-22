@@ -44,10 +44,13 @@ export const Navbar = () => {
               </li>
             </ul>
           </div>
-          <a className="btn btn-secondary btn-ghost text-xl font-bold hover:bg-primary">
+          <Link
+            to="/"
+            className="btn btn-secondary btn-ghost text-xl font-bold hover:bg-primary"
+          >
             <CiDumbbell className="text-xl" style={{ fontSize: "34px" }} />
             Work It
-          </a>
+          </Link>
         </div>
         {/* <div className="navbar-end hidden sm:flex">
           

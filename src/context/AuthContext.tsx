@@ -30,7 +30,10 @@ export const AuthoContextProvider = ({ children }) => {
         });
         const { _id, name, email, token } = response.data;
         localStorage.setItem("user", JSON.stringify(response.data));
-        dispatch({ type: "LOGIN", payload: { _id, name, email, token } });
+        dispatch({
+          type: "LOGIN",
+          payload: { _id, name, email, token, authHeader: `Bearer ${token}` },
+        });
       } catch (err) {
         console.log(err);
       }

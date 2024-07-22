@@ -8,11 +8,13 @@ import "./react-calendar.css";
 import { workout } from "@/types/types";
 import WorkoutTable from "@/components/WorkoutTable";
 import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 const Home = () => {
   const [workouts, setWorkouts] = useState<workout[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [loadingFlag, setLoadingFlag] = useState<boolean>(false);
+  const { user } = useAuthContext();
 
   const fetchWorkouts = useCallback(async (selectedDate?: Date | null) => {
     const date = selectedDate ? selectedDate : new Date();
@@ -51,9 +53,30 @@ const Home = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   fetchWorkouts(selectedDate);
-  // }, [selectedDate]);
+  const fetchApi = useCallback(async (selectedDate) => {
+    try {
+      const params = {};
+      if (selectedDate) params.date = dateFormatter(selectedDate);
+      const response = await axios({
+        method: "GET",
+        url: "http://localhost:4000/workout/" + user._id,
+        params,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        withCredentials: true,
+      });
+      console.log(response.data);
+      setWorkouts(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchApi();
+  }, []);
 
   const handleDelete = useCallback(async (id: String) => {
     setLoadingFlag(true);
@@ -81,6 +104,7 @@ const Home = () => {
         return prevState;
       }
     });
+    fetchApi(date);
     return date;
   };
 

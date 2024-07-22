@@ -1,4 +1,5 @@
 import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
+import Modal from "@/components/Modal/Modal";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import axios from "axios";
 import { useState } from "react";
@@ -11,6 +12,10 @@ const AddWorkouts = () => {
 
   const [workoutName, setWorkoutName] = useState("");
   const [sets, setSets] = useState([defaultSetsObj]);
+  const [loader, setLoader] = useState(false);
+  const [modalStatus, setModalStatus] = useState("");
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
 
   const { user } = useAuthContext();
 
@@ -35,7 +40,13 @@ const AddWorkouts = () => {
     });
   };
 
+  const resetInputs = () => {
+    setWorkoutName("");
+    setSets([defaultSetsObj]);
+  };
+
   const handleSubmit = async () => {
+    setLoader(true);
     const payload = {
       userId: user._id,
       workouts: {
@@ -55,14 +66,53 @@ const AddWorkouts = () => {
         withCredentials: true,
       });
       console.log(response.data);
+      resetInputs();
+      setModalStatus("success");
+      setModalTitle("Success");
+      setModalDescription("Workout Created Successfully");
+      document.getElementById("my_modal_3").showModal();
+      setLoader(false);
     } catch (err) {
       console.log(err);
+      setModalStatus("error");
+      setModalTitle("Error");
+      setModalDescription("Workout Creation Failed");
+      setLoader(false);
     }
+  };
+
+  const closeModal = () => {
+    setModalStatus("");
+    setModalTitle("");
+    setModalDescription("");
   };
 
   return (
     <>
-      <LoadingComponent loading={false} />
+      <LoadingComponent loading={loader} />
+      <Modal
+        onClose={closeModal}
+        status={modalStatus}
+        title={modalTitle}
+        description={modalDescription}
+      />
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              // onClick={onClose}
+            >
+              ✕
+            </button>
+          </form>
+          <h3 className={`font-bold text-lg text-${modalStatus}`}>
+            {modalTitle}
+          </h3>
+          <p className="py-4">{modalDescription}</p>
+        </div>
+      </dialog>
       <div className=" h-full w-full flex items-center justify-center">
         <div className="card w-5/6 bg-base-100 shadow-xl flex flex-col h-fit m-2">
           <div className=" form-control m-4 p-3 flex gap-2 ">
