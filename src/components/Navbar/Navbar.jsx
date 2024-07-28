@@ -63,6 +63,9 @@ export const Navbar = () => {
                   <a onClick={() => navigate("/add-workout")}>Add workout</a>
                 </li>
                 <li>
+                  <a onClick={() => navigate("/workouts")}>My Workouts</a>
+                </li>
+                <li>
                   <a className="btn" onClick={() => handleLogout()}>
                     Logout
                   </a>

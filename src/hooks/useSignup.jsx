@@ -7,7 +7,7 @@ export const useSignup = () => {
   const [loading, setLoading] = useState(false);
   const { dispatch } = useAuthContext();
 
-  const signup = async (payload: object) => {
+  const signup = async (payload) => {
     setLoading(true);
     setError(null);
     try {
@@ -20,12 +20,15 @@ export const useSignup = () => {
       });
       if (response && response.data) {
         localStorage.setItem("user", JSON.stringify(response.data));
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.token}`;
 
         //update auth context
         dispatch({ type: "LOGIN", payload: response.data });
         setLoading(false);
       }
-    } catch (err: any) {
+    } catch (err) {
       setLoading(false);
       console.log(err);
       setError(err.response.data.error);

@@ -1,15 +1,9 @@
-import { workout } from "@/types/types";
 import React from "react";
 
 import { MdEdit } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 
-interface tableProps {
-  content: workout[];
-  deleteFunction: (id: String) => Promise<void>;
-}
-
-const WorkoutTable: React.FC<tableProps> = ({ content, deleteFunction }) => {
+const WorkoutTable = ({ content, deleteFunction }) => {
   return (
     <div className="overflow-x-auto">
       <table className="table border-2 border-primary ">
@@ -52,7 +46,10 @@ const WorkoutTable: React.FC<tableProps> = ({ content, deleteFunction }) => {
                   {/* First set */}
                   <td className="text-center">{exercise.sets[0].reps}</td>
                   <td className="text-center">{exercise.sets[0].weight}</td>
-                  <td>
+                  <td
+                    rowSpan={exercise.sets.length}
+                    style={{ verticalAlign: "top" }}
+                  >
                     <div className="inline-flex w-full justify-evenly">
                       <span className="link tooltip" data-tip="Edit">
                         <MdEdit className="text-lg" />
@@ -60,7 +57,7 @@ const WorkoutTable: React.FC<tableProps> = ({ content, deleteFunction }) => {
                       <span
                         className="link tooltip"
                         data-tip="Delete"
-                        // onClick={() => deleteFunction(item._id)}
+                        onClick={() => deleteFunction(exercise._id)}
                       >
                         <MdDeleteOutline className="text-lg" />
                       </span>
@@ -72,20 +69,6 @@ const WorkoutTable: React.FC<tableProps> = ({ content, deleteFunction }) => {
                   <tr key={`${exercise._id}-${setIndex}`}>
                     <td className="text-center">{set.reps}</td>
                     <td className="text-center">{set.weight}</td>
-                    <td>
-                      <div className="inline-flex w-full justify-evenly">
-                        <span className="link tooltip" data-tip="Edit">
-                          <MdEdit className="text-lg" />
-                        </span>
-                        <span
-                          className="link tooltip"
-                          data-tip="Delete"
-                          onClick={() => deleteFunction(item._id)}
-                        >
-                          <MdDeleteOutline className="text-lg" />
-                        </span>
-                      </div>
-                    </td>
                   </tr>
                 ))}
               </React.Fragment>

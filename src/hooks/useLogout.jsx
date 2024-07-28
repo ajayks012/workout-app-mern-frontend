@@ -19,11 +19,13 @@ export const useLogout = () => {
       });
       if (response && response.data) {
         localStorage.removeItem("user");
+        delete axiosInstance.defaults.headers.common["Authorization"];
+
         dispatch({ type: "LOGOUT" });
         setLoading(false);
         navigate("/login");
       }
-    } catch (err: any) {
+    } catch (err) {
       setLoading(false);
       console.log(err);
       setError(err.response.data.error);

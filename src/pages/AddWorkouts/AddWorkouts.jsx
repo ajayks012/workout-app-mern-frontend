@@ -20,7 +20,7 @@ const AddWorkouts = () => {
   const { user } = useAuthContext();
 
   const addSets = () => {
-    setSets((prevState: Array) => {
+    setSets((prevState) => {
       return [...prevState, defaultSetsObj];
     });
   };
@@ -146,7 +146,7 @@ const AddWorkouts = () => {
                     <tbody>
                       {sets?.map((set, idx) => (
                         <tr key={idx}>
-                          <td>{idx}</td>
+                          <td>{idx + 1}</td>
                           <td>
                             <input
                               type="text"

@@ -11,7 +11,7 @@ const Modal = ({ onClose, status = "success", title, description }) => {
             ✕
           </button>
         </form>
-        <h3 className={`font-bold text-lg text-${status}`}>{title}</h3>
+        <h3 className={`font-bold text-lg text-${status}-content`}>{title}</h3>
         <p className="py-4">{description}</p>
       </div>
     </dialog>

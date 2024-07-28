@@ -3,13 +3,12 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-const Test = lazy(() => import("../pages/TestPage"));
 const Home = lazy(() => import("../pages/Home"));
 const AddWorkouts = lazy(() => import("../pages/AddWorkouts/AddWorkouts"));
 const Signup = lazy(() => import("../pages/Signup/Signup"));
 const Login = lazy(() => import("../pages/Login/Login"));
 
-export const AppRouter: React.FC = () => {
+export const AppRouter = () => {
   const { user } = useAuthContext();
   return (
     <BrowserRouter>
@@ -19,6 +18,7 @@ export const AppRouter: React.FC = () => {
             {user ? (
               <>
                 <Route path="/" element={<Home />} />
+                <Route path="/workouts" element={<Home />} />
                 {/* <Route path="/signup" element={<Home />} />
                 <Route path="/login" element={<Home />} /> */}
                 <Route path="/add-workout" element={<AddWorkouts />} />

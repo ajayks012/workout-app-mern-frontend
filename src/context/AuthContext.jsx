@@ -1,9 +1,10 @@
-import axios from "axios";
+import axiosInstance from "../api/apiHandler";
 import { createContext, useEffect, useReducer } from "react";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
-export const authReducer = (state: Object, action: Object) => {
+export const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
       return { user: action.payload };
@@ -30,9 +31,12 @@ export const AuthoContextProvider = ({ children }) => {
         });
         const { _id, name, email, token } = response.data;
         localStorage.setItem("user", JSON.stringify(response.data));
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.token}`;
         dispatch({
           type: "LOGIN",
-          payload: { _id, name, email, token, authHeader: `Bearer ${token}` },
+          payload: { _id, name, email, token },
         });
       } catch (err) {
         console.log(err);
@@ -46,6 +50,15 @@ export const AuthoContextProvider = ({ children }) => {
   useEffect(() => {
     handleRefresh();
   }, []);
+
+  // useEffect(() => {
+  //   if (state.user && state.user?.token) {
+  //     localStorage.setItem("user", state.user);
+  //   } else {
+  //     delete axiosInstance.defaults.headers.common["Authorization"];
+  //     localStorage.removeItem("user");
+  //   }
+  // }, [state.user]);
 
   console.log("auth state", state);
 
