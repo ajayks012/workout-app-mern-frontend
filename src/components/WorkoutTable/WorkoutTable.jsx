@@ -2,8 +2,9 @@ import React from "react";
 
 import { MdEdit } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
+import PropTypes from 'prop-types'
 
-const WorkoutTable = ({ content, deleteFunction }) => {
+const WorkoutTable = ({ content, editFunction, deleteFunction }) => {
   return (
     <div className="overflow-x-auto">
       <table className="table border-2 border-primary ">
@@ -51,7 +52,11 @@ const WorkoutTable = ({ content, deleteFunction }) => {
                     style={{ verticalAlign: "top" }}
                   >
                     <div className="inline-flex w-full justify-evenly">
-                      <span className="link tooltip" data-tip="Edit">
+                      <span
+                        className="link tooltip"
+                        data-tip="Edit"
+                        onClick={() => editFunction(exercise)}
+                      >
                         <MdEdit className="text-lg" />
                       </span>
                       <span
@@ -85,5 +90,11 @@ const WorkoutTable = ({ content, deleteFunction }) => {
     </div>
   );
 };
+
+WorkoutTable.propTypes = {
+  content:PropTypes.array,
+  editFunction:PropTypes.func,
+  deleteFunction:PropTypes.func
+}
 
 export default WorkoutTable;

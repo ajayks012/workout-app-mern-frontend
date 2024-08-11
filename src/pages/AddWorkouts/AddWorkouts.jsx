@@ -2,7 +2,10 @@ import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
 import Modal from "@/components/Modal/Modal";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import axiosInstance from "../../api/apiHandler";
+import { data } from "autoprefixer";
 
 const AddWorkouts = () => {
   const defaultSetsObj = {
@@ -17,7 +20,21 @@ const AddWorkouts = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
 
+  const [exId, setExID] = useState("");
+
   const { user } = useAuthContext();
+
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.state) {
+      console.log(location.state)
+      // const {exercise,sets,_id}=location.state
+      // setExID(_id)
+      // setWorkoutName(exercise)
+      // setSets(sets)
+    }
+  }, [location.state])
 
   const addSets = () => {
     setSets((prevState) => {
@@ -46,6 +63,44 @@ const AddWorkouts = () => {
   };
 
   const handleSubmit = async () => {
+    if(exId){
+      console.log('exid')
+      setLoader(true);
+    const payload = {
+      workouts: {
+        exercise: workoutName,
+        sets: sets,
+      },
+    };
+    try {
+      // const response = await axios({
+      //   method: "POST",
+      //   url: "http://localhost:4000/workout/update",
+      //   data: payload,
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${user.token}`,
+      //   },
+      //   withCredentials: true,
+      // });
+      const response = await axiosInstance.put(`/workout/update/${exId}`, {
+        data:payload
+      });
+      console.log(response.data);
+      resetInputs();
+      setModalStatus("success");
+      setModalTitle("Success");
+      setModalDescription("Workout Updated Successfully");
+      document.getElementById("my_modal_3").showModal();
+      setLoader(false);
+    } catch (err) {
+      console.log(err);
+      setModalStatus("error");
+      setModalTitle("Error");
+      setModalDescription("Workout Updation Failed");
+      setLoader(false);
+    }
+    }else{
     setLoader(true);
     const payload = {
       userId: user._id,
@@ -55,15 +110,18 @@ const AddWorkouts = () => {
       },
     };
     try {
-      const response = await axios({
-        method: "POST",
-        url: "http://localhost:4000/workout/create",
-        data: payload,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        withCredentials: true,
+      // const response = await axios({
+      //   method: "POST",
+      //   url: "http://localhost:4000/workout/create",
+      //   data: payload,
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${user.token}`,
+      //   },
+      //   withCredentials: true,
+      // });
+      const response = await axiosInstance.post(`/workout/create`, {
+        data:payload
       });
       console.log(response.data);
       resetInputs();
@@ -79,6 +137,7 @@ const AddWorkouts = () => {
       setModalDescription("Workout Creation Failed");
       setLoader(false);
     }
+  }
   };
 
   const closeModal = () => {
@@ -102,7 +161,7 @@ const AddWorkouts = () => {
             {/* if there is a button in form, it will close the modal */}
             <button
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              // onClick={onClose}
+            // onClick={onClose}
             >
               ✕
             </button>

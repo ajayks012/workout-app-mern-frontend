@@ -9,24 +9,25 @@ import WorkoutTable from "@/components/WorkoutTable/WorkoutTable";
 import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import axiosInstance from "../api/apiHandler";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [workouts, setWorkouts] = useState([]);
+  const [workoutData, setWorkoutData] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loadingFlag, setLoadingFlag] = useState(false);
   const { user } = useAuthContext();
+
+  const navigate = useNavigate()
 
   const fetchApi = useCallback(async (selectedDate) => {
     try {
       const params = {};
       console.log(selectedDate);
       if (selectedDate) params.date = dateFormatter(selectedDate);
-      console.log(params);
       const response = await axiosInstance.get(`/workout/${user._id}`, {
         params,
       });
-      console.log(response.data);
-      setWorkouts(response.data);
+      setWorkoutData(response.data)
     } catch (err) {
       console.log(err);
     }
@@ -62,6 +63,10 @@ const Home = () => {
     return date;
   };
 
+  const handleEdit = (data) => {
+    navigate('/add-workout', { state: { _id: workoutData.id, userId: user._id, workout: data } })
+  }
+
   return (
     <div className="container mx-auto">
       <LoadingComponent loading={loadingFlag} />
@@ -75,7 +80,7 @@ const Home = () => {
           </h1>
         </div>
         <div className="grow p-2">
-          <WorkoutTable content={workouts} deleteFunction={handleDelete} />
+          <WorkoutTable content={workoutData.workouts || []} editFunction={handleEdit} deleteFunction={handleDelete} />
         </div>
         <div className="flex-none p-2">
           <Calendar

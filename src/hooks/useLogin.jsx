@@ -15,8 +15,8 @@ export const useLogin = () => {
         method: "POST",
         url: "http://localhost:4000/auth/login",
         data: payload,
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
+        // headers: { "Content-Type": "application/json" },
+        // withCredentials: true,
       });
       if (response && response.data) {
         localStorage.setItem("user", JSON.stringify(response.data));
